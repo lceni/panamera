@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      * {
+        font: 4pt serif;
+        color: #aaa;
+        -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none; /* Safari */
+           -khtml-user-select: none; /* Konqueror HTML */
+             -moz-user-select: none; /* Firefox */
+              -ms-user-select: none; /* Internet Explorer/Edge */
+                  user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome and Opera */
+      }
+      #terrain {
+
+      }
+      #terrain div {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+      }
+      #terrain div div {
+        width: 2px;
+        height: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #terrain div div:hover {
+        cursor: default;
+        background-color: orange;
+      }
+    </style>
+    <script defer="defer">
+      var World = World || {
+        rows: 24,
+        columns: 32,
+
+        init: function() {
+          var canvas = document.getElementById('canvas');
+          canvas.style.display='none';
+          var context = canvas.getContext('2d');
+
+          var image = new Image();
+          image.onload = function() {
+            canvas.width = image.width;
+            canvas.height = image.height;
+
+            context.drawImage(image, 0, 0);
+            var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            var terrainEl = document.createElement('div');
+            terrainEl.id = 'terrain';
+            document.body.appendChild(terrainEl);
+
+            for (var i=0; i<canvas.height; i++) {
+              var lineEl = document.createElement('div');
+              terrainEl.appendChild(lineEl);
+              for (var j=0; j<canvas.width; j++) {
+                var cellEl = document.createElement('div');
+
+                var idx = (i*canvas.width+j)*4;
+                var r = imageData.data[idx+0];
+                var g = imageData.data[idx+1];
+                var b = imageData.data[idx+2];
+
+                var bgColor = '#'+String("00" + r.toString(16)).slice(-2)+String("00" + g.toString(16)).slice(-2)+String("00" + b.toString(16)).slice(-2);
+                cellEl.style.backgroundColor = bgColor;
+
+                lineEl.appendChild(cellEl);
+              }
+            }
+          };
+
+          image.src = 'panamera.jpg';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script>
+    World.init();
+  </script>
+</html>
